@@ -19,16 +19,28 @@ class Scene2(Scene):
             frame_delay=5  # Adjust the delay to control animation speed
         )
 
-        self.player_pos = [50, 500]  # Start at the far left side of the screen
+        self.player_pos = [750, 500]  # Initially, start off-screen on the right
         self.target_pos = self.player_pos[:]
         self.speed = 5
         self.walk_y = 500  # Fixed y position for walking
 
+        # Post-transition animation state
+        self.animating_in = False
+
     def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if not self.animating_in and event.type == pygame.MOUSEBUTTONDOWN:
             self.target_pos = [event.pos[0], self.walk_y]
 
     def update(self):
+        if self.animating_in:
+            # Animate the character into the scene by moving them to the left
+            if self.player_pos[0] < 50:
+                self.player_pos[0] += 10
+            else:
+                self.animating_in = False  # Stop animating when the character is fully in frame
+            return None  # Skip the normal update while animating
+
+        # Regular movement logic
         dx = self.target_pos[0] - self.player_pos[0]
         dist = abs(dx)
         if dist > self.speed:
@@ -40,7 +52,7 @@ class Scene2(Scene):
         self.walk_animation.update(moving)
 
         # Check if the player has reached the left edge of the screen
-        if self.player_pos[0] <= 50:  # Assuming 0 is the left edge
+        if self.player_pos[0] <= 50:  # Transition when at 50px or less from the left
             return 'Scene1'
 
         # Prevent transition on the right edge

@@ -24,11 +24,22 @@ class Scene1(Scene):
         self.speed = 5
         self.walk_y = 500  # Fixed y position for walking
 
+        # Post-transition animation state
+        self.animating_in = False
+
     def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if not self.animating_in and event.type == pygame.MOUSEBUTTONDOWN:
             self.target_pos = [event.pos[0], self.walk_y]
 
     def update(self):
+        if self.animating_in:
+            # Animate the character into the scene by moving them to the right
+            if self.player_pos[0] > 50:
+                self.player_pos[0] -= 10
+                if self.player_pos[0] <= 50:
+                    self.animating_in = False  # Stop animating when the character is fully in frame
+            return None
+
         dx = self.target_pos[0] - self.player_pos[0]
         dist = abs(dx)
         if dist > self.speed:

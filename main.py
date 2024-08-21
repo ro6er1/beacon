@@ -25,11 +25,15 @@ def main():
         next_scene_name = current_scene.update()
         if next_scene_name:
             if next_scene_name == 'Scene2':
-                scenes[next_scene_name].player_pos[0] = 50  # Move player 50px right when entering Scene2
+                current_scene = scenes['Scene2']
+                current_scene.player_pos[0] = 60  # Start just offscreen to the left
+                current_scene.animating_in = True  # Trigger the animation into the frame
             elif next_scene_name == 'Scene1':
-                scenes[next_scene_name].player_pos[0] = 750  # Move player 50px left when entering Scene1
+                current_scene = scenes['Scene1']
+                current_scene.player_pos[0] = 740  # Start just offscreen to the right
+                current_scene.animating_in = False  # Trigger the animation into the frame
 
-            current_scene = scenes[next_scene_name]
+            current_scene.target_pos[0] = current_scene.player_pos[0]
 
         screen.fill((0, 0, 0))  # Clear the screen before drawing the new scene
         current_scene.draw()
